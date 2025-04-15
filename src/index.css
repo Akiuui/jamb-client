@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+button{
+  border: 1px solid;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.grid-row {
+  display: flex;
+  gap: 4px;
+}
+.grid-cell {
+  width: 40px;
+  height: 40px;
+  background-color: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.grid-cell.active {
+  background-color: lightgreen;
+}
