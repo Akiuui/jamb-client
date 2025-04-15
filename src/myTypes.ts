@@ -1,10 +1,15 @@
 import WebRTCSessionGuest from "./models/WebRTCSessionGuest"
 import WebRTCSessionHost from "./models/WebRTCSessionHost"
 
+export interface User {
+    username: string
+    id: string
+}
+
 export type PeerConnection = WebRTCSessionGuest | WebRTCSessionHost
 
 export interface SessionProps{
-    userId: string
+    // userId: string
     setShowButton: React.Dispatch<React.SetStateAction<string>>
     socketUrl: string
     setConnection: React.Dispatch<React.SetStateAction<PeerConnection | undefined>>

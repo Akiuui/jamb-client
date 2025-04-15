@@ -4,9 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import axios, { AxiosResponse } from "axios"
 // import fetchPlayersId from "../routes/fetchPlayersId.js";
 import { SessionProps } from "../myTypes.ts";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store.ts";
 
-function JoinSessionButton({userId, setShowButton, socketUrl, setConnection}: SessionProps){
+function JoinSessionButton({setShowButton, socketUrl, setConnection}: SessionProps){
     
+    const {id: userId} = useSelector((state : RootState) => state.user)
     const [connectionState, setConnectionState] = useState<RTCPeerConnectionState>(); // Track the connection state
     const showButton = "joinSession" 
     const navigate = useNavigate()
@@ -19,7 +22,7 @@ function JoinSessionButton({userId, setShowButton, socketUrl, setConnection}: Se
             return
 
         try {
-            
+            //Convert into a function
             res = await axios.get(`https://auth-server-production-90c7.up.railway.app/userExist?username=${tagetUsername}`)
             console.log(res)
 
@@ -39,11 +42,16 @@ function JoinSessionButton({userId, setShowButton, socketUrl, setConnection}: Se
         let targetUserId = res.data.message
         
         setShowButton(showButton)
+
+        if(!userId){
+            alert("UserId is undefined")
+            return
+        }
         
         let guest = new WebRTCSessionGuest(userId, targetUserId, socketUrl)
 
         guest.peer.addEventListener('connectionstatechange', () => {
-            console.log(guest.peer.connectionState)
+            // console.log(guest.peer.connectionState)
             setConnectionState(guest.peer.connectionState); // Update connection state
 
             if(guest.peer.connectionState == "connected"){
@@ -64,7 +72,7 @@ function JoinSessionButton({userId, setShowButton, socketUrl, setConnection}: Se
             :
             (<p>Session joined🟢</p>)
         }
-         {connectionState && <p>Connection State: {connectionState}</p>}
+        {connectionState && <p>Connection State: {connectionState}</p>}
 
 
         </>

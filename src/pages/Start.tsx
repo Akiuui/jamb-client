@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react"
+import { PeerConnection } from "../myTypes.ts"
+import { useNavigate } from "react-router-dom"
+//components
 import LogoutButton from "../components/LogoutButton.tsx"
 import StartSessionButton from "../components/StartSessionButton.tsx"
 import JoinSessionButton from "../components/JoinSessionButton.tsx"
-import axios from "axios"
-import { useNavigate } from "react-router-dom"
-import { PeerConnection } from "../myTypes.ts"
+//controllers
+import fetchProtectedData from "../controllers/fetchProtectedData.ts"
+//redux
+import { useDispatch, useSelector } from "react-redux"
+import { login } from "../redux/userSlice.ts"
+import { RootState } from "../redux/store.ts"
 
-interface User {
-    username: string
-    userId: string
-}
 
 interface StartProps {
     setConnection: React.Dispatch<React.SetStateAction<PeerConnection | undefined>>
@@ -18,28 +20,22 @@ interface StartProps {
 function Start({setConnection} : StartProps){
 
     const navigate = useNavigate()
-
-    const [user, setUser] = useState<User>({
-        username: "",
-        userId: ""
-    })
+    const dispatch = useDispatch()
+    const user = useSelector((state: RootState) => state.user)
 
     const [showButton, setShowButton] = useState("both")
     let socketUrl = "ws://signaling-server-production-5768.up.railway.app"
 
     useEffect(() => {
-            axios.get("https://auth-server-production-90c7.up.railway.app/protected", {withCredentials:true})
-            // .then((res) => console.log(res.data.user))
-            .then((res) => setUser(res.data.user))
-            .catch((error) => {
-                if (axios.isAxiosError(error)) {
 
-                    console.error("❌ Axios error:", error.message);
-                    if (error.response && error.response.status >= 400 && error.response.status <=500) {
-                        alert("Session expired, please log in again");
-                        navigate("/login")
-                    }
-                
+        fetchProtectedData()
+            .then(userData => dispatch(login(userData)))
+            .catch(error => {
+                if (error.message.includes("Session expired")) {
+                    alert("Session expired, please log in again");
+                    navigate("/login");
+                }else{
+                    console.log(error)
                 }
             })
 
@@ -56,7 +52,7 @@ function Start({setConnection} : StartProps){
                         user ?
                         <>
                             <p className="text-lg">Username: {user.username}</p>
-                            <p className="text-lg">UserId: {user.userId}</p>
+                            <p className="text-lg">UserId: {user.id}</p>     
                         </>
                         :
                         <></>
@@ -67,11 +63,11 @@ function Start({setConnection} : StartProps){
 
             <div className="flex flex-col justify-center items-center flex-grow mt-8">
                 {showButton === "both" || showButton === "startSession" ? (
-                    <StartSessionButton setConnection={setConnection} setShowButton={setShowButton} userId={user.userId} socketUrl={socketUrl} />
+                    <StartSessionButton setConnection={setConnection} setShowButton={setShowButton} socketUrl={socketUrl} />
                 ) : null}
 
                 {showButton === "both" || showButton === "joinSession" ? (
-                    <JoinSessionButton setConnection={setConnection} setShowButton={setShowButton} userId={user.userId} socketUrl={socketUrl} />
+                    <JoinSessionButton setConnection={setConnection} setShowButton={setShowButton} socketUrl={socketUrl} />
                 ) : null}
             </div>
 

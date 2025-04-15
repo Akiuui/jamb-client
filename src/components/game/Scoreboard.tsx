@@ -1,39 +1,44 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
+
+export const SCORE_CATEGORIES = [
+  "1", "2", "3", "4", "5", "6", "Max", "Min", "Kenta", "Triling", "Ful", "Poker", "Jamb"
+]
+export type ScoreCategory = typeof SCORE_CATEGORIES[number]
 
 function Scoreboard() {
 
     const rows = 17
     const cols = 9
 
-    const jamb = {
-        "00": "Yamb",
-        "01": "Down",
-        "02": "Free",
-        "03": "N",
-        "04": "R",
-        "05": "D",
-        "06": "FromMiddle",
-        "07": "ToMiddle",
-        "08": "O",
-        "09": "M",
-        "010": "Yamb",
-        "10": "1",
-        "20": "2",
-        "30": "3",
-        "40": "4",
-        "50": "5",
-        "60": "6",
-        "70": "M",
-        "80": "Max",
-        "90": "Min",
-        "100": "@",
-        "110": "Kenta",
-        "120": "Triling",
-        "130": "Ful",
-        "140": "Poker",
-        "150": "Yamb",
-        "160": "M" 
-      }
+    // const jamb = {
+    //     "00": "Yamb",
+    //     "01": "Down",
+    //     "02": "Free",
+    //     "03": "N",
+    //     "04": "R",
+    //     "05": "D",
+    //     "06": "FromMiddle",
+    //     "07": "ToMiddle",
+    //     "08": "O",
+    //     "09": "M",
+    //     "010": "Yamb",
+    //     "10": "1",
+    //     "20": "2",
+    //     "30": "3",
+    //     "40": "4",
+    //     "50": "5",
+    //     "60": "6",
+    //     "70": "M",
+    //     "80": "Max",
+    //     "90": "Min",
+    //     "100": "@",
+    //     "110": "Kenta",
+    //     "120": "Triling",
+    //     "130": "Ful",
+    //     "140": "Poker",
+    //     "150": "Yamb",
+    //     "160": "M" 
+    //   }
     
       const [clickedCells, setClickedCells] = useState({});
     
@@ -58,7 +63,7 @@ function Scoreboard() {
               className={`grid-cell ${isActive ? "active" : ""}`}
               onClick={() => handleClick(row, col)}
             >
-              {jamb[key]}
+              {SCORE_CATEGORIES[key]}
             </div>
           );
         }
